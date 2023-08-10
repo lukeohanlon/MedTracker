@@ -1,19 +1,78 @@
-/* Add this CSS to your component's stylesheet or a separate CSS file */
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@200;300;400;500&display=swap');
+
+body {
+  font-family: 'Lato', sans-serif;
+}
+input,
+textarea,
+label,
+button {
+  font-family: 'Lato', sans-serif;
+}
+
+input,
+textarea {
+  padding: 10px;
+  border: none;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+  margin: 10px;
+  font-size: 1rem;
+}
+input:focus,
+textarea:focus {
+  outline: none;
+  color: rgb(3, 153, 240);
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+.blue {
+  color: rgb(3, 153, 240);
+}
+/* p, span, div {
+  outline: none;
+}
+
+button:focus {
+  outline: none;
+} */
+
+button {
+  padding: 5px 10px;
+  margin: 5px;
+  background-color: rgb(3, 153, 240);
+  color: #f0f0f0;
+  border: none;
+  font-size: 1rem;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+  cursor: pointer;
+}
 .selectable-list {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 30px 0 0 0;
   position: absolute;
   background-color: white;
-  border: 1px solid #ccc;
+  /* border: 1px solid #ccc; */
+  border-radius: 5px;
   border-top: none;
-  width: 100%;
+  width: fit-content;
   max-height: 150px;
   overflow-y: auto;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .selectable-list li {
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.selectable-list li:nth-child(even) {
+  background-color: rgba(236, 237, 237, 0.402);
   padding: 8px 16px;
   cursor: pointer;
   transition: background-color 0.3s ease;
@@ -25,4 +84,19 @@
 
 .test {
   margin-top: 19em;
+}
+
+.search-wrap {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.search-res-wrap {
+  width: 80%;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+  padding: 2em;
+  transition: background-color 0.3s ease;
+  border-radius: 5px;
 }

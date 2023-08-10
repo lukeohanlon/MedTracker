@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import DrugAutocomplete from './DrugAutoComplete';
+import MyMeds from './MyMeds';
 
 const MedicationList = () => {
   const [selectedDrug, setSelectedDrug] = useState(null);
@@ -23,6 +24,7 @@ const MedicationList = () => {
             <p>Dosage Form: {selectedDrug.dosageForm}</p>
           </div>
         )}
+        <MyMeds />
       </div>
     </div>
   );
