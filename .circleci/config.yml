@@ -11,35 +11,33 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker:
-          version: 20.10.8
       - run:
           name: Build and Push Docker Image
           command: |
-            docker build -t lukeohanlon/meds:latest .
-            docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
-            docker push lukeohanlons/meds:latest
+            docker build -t $DOCKER_USERNAME/meds:latest .
+            docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+            docker push $DOCKER_USERNAME/meds:latest
 
-  # deploy:
-  #   docker:
-  #     - image: lukeohanlon/meds:latest
-  #   steps:
-  #     - checkout
-  #     - run:
-  #         name: Deploy to EC2
-  #         command: |
-  #           ssh -i <path-to-your-ssh-key> ubuntu@<your-ip-address> <<EOF
-  #           cd /path/to/your/app
-  #           docker-compose down
-  #           docker-compose pull
-  #           docker-compose up -d
-  #           EOF
+  deploy:
+    docker:
+      - image: $DOCKER_USERNAME/meds:latest
+    steps:
+      - checkout
+      - run:
+          name: Deploy to EC2
+          command: |
+     ssh -i "meds.pem" ubuntu@ec2-16-170-206-226.eu-north-1.compute.amazonaws.com
+            cd MedTracker
+            docker-compose down
+            docker-compose pull
+            docker-compose up -d
 
 workflows:
   version: 2
   build-deploy:
     jobs:
       - build:
-          context: DockerHub
-      # - deploy:
-      #     requires:
-      #       - build
+          context: Docker
+      - deploy:
+          requires:
+            - build
