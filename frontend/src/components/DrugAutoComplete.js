@@ -15,15 +15,45 @@ const DrugAutocomplete = () => {
   const [reminderDate, setReminderDate] = useState('')
   const [reminderTime, setReminderTime] = useState('')
   const [dose, setDose] = useState('')
-  const [showReminderModal, setShowReminderModal] = useState(false);
+  const [showReminderModal, setShowReminderModal] = useState(false)
+  const [recurringFrequency, setRecurringFrequency] = useState('')
+  const [recurringHours, setRecurringHours] = useState('');
+  const [recurringMinutes, setRecurringMinutes] = useState('');
+
+  const [notificationPermission, setNotificationPermission] = useState('default');
+
+  // const requestNotificationPermission = async () => {
+  //   try {
+  //     const permission = await Notification.requestPermission();
+  //     setNotificationPermission(permission);
+  //   } catch (error) {
+  //     console.error('Error requesting notification permission:', error);
+  //   }
+  // };
+
+  // const displayNotification = () => {
+  //   if (notificationPermission === 'granted') {
+  //     const options = {
+  //       body: 'This is a notification!',
+  //       // icon: '/path-to-icon.png', // Replace with the actual path to your icon
+  //     };
+
+  //     new Notification('Notification Title', options);
+  //   } else {
+  //     console.log('Notification permission not granted.');
+  //   }
+  // };
+
+ 
+
 
   const openReminderModal = () => {
-    setShowReminderModal(true);
-  };
+    setShowReminderModal(true)
+  }
 
   const closeReminderModal = () => {
-    setShowReminderModal(false);
-  };
+    setShowReminderModal(false)
+  }
 
   // This function will be used to set the drug when from dropdown
   const onSelect = selected => {
@@ -99,99 +129,6 @@ const DrugAutocomplete = () => {
     }
   }
 
-  // const fetchDrugInfo = async brandName => {
-  //   try {
-  //     const apiKey = 'lpJ5J2uvxEZeQZkl3JtmeegWpMzgNlUcL00ahzZK';
-  //     const apiUrl = `https://api.fda.gov/drug/label.json?api_key=${apiKey}&search=openfda.brand_name.exact:"${brandName}"&limit=1`;
-
-  //     const response = await axios.get(apiUrl);
-  //     const drugInfo = response.data.results[0];
-
-  //     if (drugInfo) {
-  //       const purpose = drugInfo.purpose?.[0] || '';
-  //       const extractedPurpose = purpose && purpose.includes('Purposes')
-  //         ? purpose.split('Purposes ')[1]
-  //         : purpose;
-  //       return {
-  //         brandName: drugInfo.openfda.brand_name?.[0] || '', // Fixed to use "brand_name" instead of "brandName"
-  //         purpose: extractedPurpose || '',
-  //         genericName: drugInfo.openfda.generic_name?.[0] || '',
-  //         dosageText: drugInfo.dosage_and_administration || '',
-  //         dosageForm: drugInfo.openfda.dosage_form?.[0] || '',
-  //         activeSubstance: drugInfo.openfda.substance_name?.[0] || '',
-  //         route: drugInfo.openfda.route?.[0] || '',
-  //         dosageAmount: drugInfo.dosage_and_administration || '',
-  //       };
-  //     } else {
-  //       const medicinalProductInfo = await fetchDrugInfoByMedicinalProduct(
-  //         brandName
-  //       );
-  //       return {
-  //         brandName: '',
-  //         purpose: medicinalProductInfo.purpose || '', // Fixed to use "purpose" from medicinalProductInfo
-  //         genericName: medicinalProductInfo.genericName || '',
-  //         dosageText: medicinalProductInfo.dosageText || '',
-  //         dosageForm: medicinalProductInfo.dosageForm || '',
-  //         activeSubstance: medicinalProductInfo.activeSubstance || '',
-  //         route: medicinalProductInfo.route || '',
-  //         dosageAmount: medicinalProductInfo.dosageAmount || '',
-  //       };
-  //     }
-  //   } catch (error) {
-  //     console.error('Error fetching drug info:', error);
-  //     return {
-  //       brandName: '',
-  //       genericName: '',
-  //       dosageText: '',
-  //       dosageForm: '',
-  //       activeSubstance: '',
-  //       route: '',
-  //       dosageAmount: '',
-  //     };
-  //   }
-  // };
-
-  // const fetchDrugInfoByMedicinalProduct = async medicinalProduct => {
-  //   try {
-  //     const apiKey = 'lpJ5J2uvxEZeQZkl3JtmeegWpMzgNlUcL00ahzZK';
-  //     const apiUrl = `https://api.fda.gov/drug/label.json?api_key=${apiKey}&search=medicinalproduct.exact:"${medicinalProduct}"&limit=1`;
-
-  //     const response = await axios.get(apiUrl);
-  //     const drugInfo = response.data.results[0];
-
-  //     if (drugInfo) {
-  //       const purpose = drugInfo.purpose?.[0] || '';
-  //       const extractedPurpose = purpose && purpose.includes('Purposes')
-  //         ? purpose.split('Purposes ')[1]
-  //         : purpose;
-
-  //       return {
-  //         brandName: '',
-  //         purpose: extractedPurpose,
-  //         genericName: drugInfo.openfda.generic_name?.[0] || '',
-  //         dosageText: drugInfo.dosage_and_administration || '',
-  //         dosageForm: drugInfo.openfda.dosage_form?.[0] || '',
-  //         activeSubstance: drugInfo.openfda.substance_name?.[0] || '',
-  //         route: drugInfo.openfda.route?.[0] || '',
-  //         dosageAmount: drugInfo.dosage_and_administration || '',
-  //       };
-  //     } else {
-  //       throw new Error('Drug information not found.');
-  //     }
-  //   } catch (error) {
-  //     console.error('Error fetching drug info by medicinal product:', error);
-  //     return {
-  //       brandName: '',
-  //       purpose: '',
-  //       genericName: '',
-  //       dosageText: '',
-  //       dosageForm: '',
-  //       activeSubstance: '',
-  //       route: '',
-  //       dosageAmount: '',
-  //     };
-  //   }
-  // }
 
   const handleSelectBrand = async brandName => {
     const apiKey = 'lpJ5J2uvxEZeQZkl3JtmeegWpMzgNlUcL00ahzZK'
@@ -259,6 +196,10 @@ const DrugAutocomplete = () => {
     }
   }
 
+  // const handleRecurringFrequencyChange = event => {
+  //   setRecurringFrequency(event.target.value);
+  // };
+
   const addMedicine = medicine => {
     setSelectedMedicines([...selectedMedicines, medicine])
   }
@@ -268,20 +209,27 @@ const DrugAutocomplete = () => {
   }
 
   const handleReminderDateChange = event => {
-    setReminderDate(event.target.value);
+    setReminderDate(event.target.value)
+  }
+  const handleRecurringHoursChange = event => {
+    setRecurringHours(event.target.value);
   };
-  
+  const handleRecurringMinutesChange = event => {
+    setRecurringMinutes(event.target.value);
+  };
   const handleReminderTimeChange = event => {
     setReminderTime(event.target.value);
   };
   
   const handleDoseChange = event => {
-    setDose(event.target.value);
-  };
+    setDose(event.target.value)
+  }
 
-  const createReminder = async () => {
+
+  const createRecurringReminder = async () => {
     try {
-      if (selectedDrug && reminderDate && reminderTime && dose) {
+      console.log(recurringHours, recurringMinutes)
+      if (selectedDrug) {
         const medicationData = {
           generic_name: selectedDrug.brandName || 'Not Available',
           purpose: selectedDrug.purpose || 'Not Available',
@@ -290,28 +238,76 @@ const DrugAutocomplete = () => {
           active_substance: selectedDrug.activeSubstance || 'Not Available',
           route: selectedDrug.route || 'Not Available',
           reminder_date: reminderDate,
-          reminder_time: reminderTime
-          ? new Date(`2000-01-01T${reminderTime}`).toLocaleTimeString([], { timeStyle: 'short' })
-          : '',  
-          dose: dose,
+          reminder_time: reminderTime,
+          recurring_interval: `${recurringHours}h ${recurringMinutes}m`,
         };
-        console.log("SENT DATA: " + medicationData.reminder_date + medicationData.reminder_time + medicationData.dose )
   
-        const response = await axios.post('http://localhost:3000/api/v1/medications', {
-          medication: medicationData,
-        });
-
-        closeReminderModal();
-        console.log('Medication and Reminder created:', response.data);
+        try {
+          const response = await axios.post(
+            'http://localhost:3000/api/v1/medications',
+            { medication: medicationData }
+          );
+  
+          if (notificationPermission === 'granted') {
+            scheduleRecurringNotifications(
+              response.data.id,
+              reminderTime,
+              `${recurringHours}h ${recurringMinutes}m`
+            );
+          }
+  
+          closeReminderModal();
+          console.log('Medication and Reminder created:', response.data);
+        } catch (error) {
+          console.error('Error creating medication and reminder:', error);
+        }
       } else {
-        console.error('Please fill in all fields before saving the reminder.');
+        console.error('No selected drug.');
       }
     } catch (error) {
-      console.error('Error creating medication and reminder:', error);
+      console.error('Error in createRecurringReminder:', error);
     }
   };
+  
 
 
+
+  const scheduleRecurringNotifications = async (
+    medicationId,
+    reminderTime,
+    interval
+  ) => {
+    const totalMinutes = parseInt(recurringHours) * 60 + parseInt(recurringMinutes);
+  
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission === 'granted') {
+        const userSelectedTime = new Date(`2000-01-01T${reminderTime}`);
+        let currentTime = userSelectedTime.getTime();
+    
+        for (let i = 0; i <= 24 * 60; i += totalMinutes) {
+          currentTime += i * 60 * 1000; // Convert to milliseconds
+          const notificationTime = new Date(currentTime);
+    
+          // Schedule the notification
+          navigator.serviceWorker.ready.then(registration => {
+            registration.showNotification(
+              `Reminder for ${selectedDrug.brandName}`,
+              {
+                body: `Time to take your medication: ${reminderTime}`,
+                icon: '/path-to-icon.png',
+                tag: `medication-reminder-${medicationId}`,
+                badge: '/path-to-badge.png',
+              }
+            );
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error requesting notification permission:', error);
+    }
+  };
+  
   const renderDrugInfo = () => {
     if (selectedDrug) {
       const drugName = selectedDrug.brandName
@@ -378,12 +374,12 @@ const DrugAutocomplete = () => {
               <span className="blue">Route:</span> {selectedDrug.route}
             </p>
           )}
-        {selectedDrug && (
-        <>
-          <button onClick={openReminderModal}>Set Reminder</button>
-          <button onClick={saveSelectedMedicines}>Save Medicines</button>
-        </>
-      )}
+          {selectedDrug && (
+            <>
+              <button onClick={openReminderModal}>Set Reminder</button>
+              <button onClick={saveSelectedMedicines}>Save Medicines</button>
+            </>
+          )}
           <button onClick={cancelSelection}>Cancel</button>
         </div>
       )
@@ -417,7 +413,7 @@ const DrugAutocomplete = () => {
           ))}
         </ul>
       )}
-     {showReminderModal && (
+      {showReminderModal && (
         <Modal brandName={selectedDrug.brandName} onClose={closeReminderModal}>
           <h2>Set Reminder</h2>
           <div>
@@ -434,18 +430,31 @@ const DrugAutocomplete = () => {
               type="time"
               value={reminderTime}
               onChange={handleReminderTimeChange}
+              step="60" 
             />
           </div>
+          
           <div>
             <label>Dose:</label>
+            <input type="text" value={dose} onChange={handleDoseChange} />
+          </div>
+          <div>
+            <label>Recurring Frequency:</label>
             <input
-              type="text"
-              value={dose}
-              onChange={handleDoseChange}
+              type="number"
+              value={recurringHours}
+              onChange={handleRecurringHoursChange}
+              placeholder="Hours"
+            />
+            <input
+              type="number"
+              value={recurringMinutes}
+              onChange={handleRecurringMinutesChange}
+              placeholder="Minutes"
             />
           </div>
-          <button onClick={createReminder}>Save Reminder</button>
-        </Modal >
+          <button onClick={createRecurringReminder}>Save Reminder</button>
+        </Modal>
       )}
       {renderDrugInfo()}
     </div>

@@ -60,7 +60,8 @@ class Api::V1::MedicationsController < ApplicationController
       :active_substance,
       :route,
       :reminder_date,   
-      :reminder_time,   
+      :reminder_time, 
+      :recurring_interval,  
       :dose             
     )
   end
