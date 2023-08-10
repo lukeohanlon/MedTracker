@@ -2,7 +2,7 @@ import logo from './logo.svg'
 import './index.css'
 import MedicationList from './components/MedicationList'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import MyMeds from './components/MyMeds'
+import MyMeds from './views/MyMeds'
 
 function App() {
   return (

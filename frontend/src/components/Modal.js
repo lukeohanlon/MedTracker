@@ -2,12 +2,14 @@ import React from 'react';
 
 const Modal = ({ children, onClose, brandName }) => {
   return (
-    <div className="modal">
+    <div  className="modal-wrap">
+        <div className="modal">
       <div className="modal-content">
-        <h3>{brandName}</h3>
+      <h1 className='modal-head'>Set Reminder</h1>
+        <h2 className='modal-head'>{brandName}</h2>
         {children}
-        <button onClick={onClose}>Close</button>
       </div>
+    </div>
     </div>
   );
 };

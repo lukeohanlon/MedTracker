@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
 import DrugAutocomplete from './DrugAutoComplete';
-import MyMeds from './MyMeds';
+import MyMeds from '../views/MyMeds';
 
 const MedicationList = () => {
   const [selectedDrug, setSelectedDrug] = useState(null);
+  const [meds, setMeds] = useState([])
+  
+  const addMedication = newMedication => {
+    setMeds(prevMeds => [...prevMeds, newMedication]);
+  };
 
   // This function will receive the selected drug information from DrugAutocomplete
   const handleDrugSelection = (selected) => {
@@ -13,7 +18,7 @@ const MedicationList = () => {
   return (
     <div>
       <h1>Medication List</h1>
-      <DrugAutocomplete onSelect={handleDrugSelection} />
+      <DrugAutocomplete onSelect={handleDrugSelection} onAddMedication={addMedication}/>
       <div className="medication-info">
         {selectedDrug && (
           <div>
@@ -24,7 +29,7 @@ const MedicationList = () => {
             <p>Dosage Form: {selectedDrug.dosageForm}</p>
           </div>
         )}
-        <MyMeds />
+        <MyMeds  meds={meds} setMeds={setMeds}/>
       </div>
     </div>
   );

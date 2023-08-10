@@ -2,49 +2,24 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import Modal from './Modal'
 
-const DrugAutocomplete = () => {
+const DrugAutocomplete = ({onAddMedication}) => {
   const [inputValue, setInputValue] = useState('')
   const [brandNames, setBrandNames] = useState([])
   const [showDropdown, setShowDropdown] = useState(false)
   const [medications, setMedications] = useState([])
   const [drugInfo, setDrugInfo] = useState([])
   const [selectedDrug, setSelectedDrug] = useState(null)
-  const [selectedDrugData, setSelectedDrugData] = useState(null)
+
   const [showFullDosageText, setShowFullDosageText] = useState(false)
   const [selectedMedicines, setSelectedMedicines] = useState([])
   const [reminderDate, setReminderDate] = useState('')
   const [reminderTime, setReminderTime] = useState('')
   const [dose, setDose] = useState('')
   const [showReminderModal, setShowReminderModal] = useState(false)
-  const [recurringFrequency, setRecurringFrequency] = useState('')
   const [recurringHours, setRecurringHours] = useState('');
   const [recurringMinutes, setRecurringMinutes] = useState('');
 
-  const [notificationPermission, setNotificationPermission] = useState('default');
 
-  // const requestNotificationPermission = async () => {
-  //   try {
-  //     const permission = await Notification.requestPermission();
-  //     setNotificationPermission(permission);
-  //   } catch (error) {
-  //     console.error('Error requesting notification permission:', error);
-  //   }
-  // };
-
-  // const displayNotification = () => {
-  //   if (notificationPermission === 'granted') {
-  //     const options = {
-  //       body: 'This is a notification!',
-  //       // icon: '/path-to-icon.png', // Replace with the actual path to your icon
-  //     };
-
-  //     new Notification('Notification Title', options);
-  //   } else {
-  //     console.log('Notification permission not granted.');
-  //   }
-  // };
-
- 
 
 
   const openReminderModal = () => {
@@ -248,14 +223,14 @@ const DrugAutocomplete = () => {
             { medication: medicationData }
           );
   
-          if (notificationPermission === 'granted') {
-            scheduleRecurringNotifications(
-              response.data.id,
-              reminderTime,
-              `${recurringHours}h ${recurringMinutes}m`
-            );
-          }
-  
+          // if (notificationPermission === 'granted') {
+          //   scheduleRecurringNotifications(
+          //     response.data.id,
+          //     reminderTime,
+          //     `${recurringHours}h ${recurringMinutes}m`
+          //   );
+          // }
+          onAddMedication(response.data);
           closeReminderModal();
           console.log('Medication and Reminder created:', response.data);
         } catch (error) {
@@ -377,7 +352,7 @@ const DrugAutocomplete = () => {
           {selectedDrug && (
             <>
               <button onClick={openReminderModal}>Set Reminder</button>
-              <button onClick={saveSelectedMedicines}>Save Medicines</button>
+              {/* <button onClick={saveSelectedMedicines}>Save Medicines</button> */}
             </>
           )}
           <button onClick={cancelSelection}>Cancel</button>
@@ -415,8 +390,8 @@ const DrugAutocomplete = () => {
       )}
       {showReminderModal && (
         <Modal brandName={selectedDrug.brandName} onClose={closeReminderModal}>
-          <h2>Set Reminder</h2>
-          <div>
+          
+          <div className='mod-in'>
             <label>Date:</label>
             <input
               type="date"
@@ -424,7 +399,7 @@ const DrugAutocomplete = () => {
               onChange={handleReminderDateChange}
             />
           </div>
-          <div>
+          <div className='mod-in'>
             <label>Time:</label>
             <input
               type="time"
@@ -434,12 +409,12 @@ const DrugAutocomplete = () => {
             />
           </div>
           
-          <div>
+          <div className='mod-in'>
             <label>Dose:</label>
             <input type="text" value={dose} onChange={handleDoseChange} />
           </div>
-          <div>
-            <label>Recurring Frequency:</label>
+          <div className='mod-ev'>
+            <label>Due Every:</label> <br />
             <input
               type="number"
               value={recurringHours}
@@ -453,7 +428,11 @@ const DrugAutocomplete = () => {
               placeholder="Minutes"
             />
           </div>
+          <div className="modal-btns">
           <button onClick={createRecurringReminder}>Save Reminder</button>
+          <button onClick={closeReminderModal}>Close</button>
+          </div>
+
         </Modal>
       )}
       {renderDrugInfo()}
