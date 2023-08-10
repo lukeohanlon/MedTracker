@@ -48,15 +48,15 @@ jobs:
           command: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
       - run:
           name: build-backend-docker-image
-          command: docker build -t $BACKEND_IMAGE:latest ./backend
+          command: docker build -t $DOCKER_USERNAME/backend-image:latest ./backend
       - run:
           name: build-frontend-docker-image
-          command: docker build -t $FRONTEND_IMAGE:latest ./frontend
+          command: docker build -t $DOCKER_USERNAME/frontend-image:latest ./frontend
       - run:
           name: publish-docker-images
           command: |
-            docker push $BACKEND_IMAGE
-            docker push $FRONTEND_IMAGE
+            docker push $DOCKER_USERNAME/backend-image
+            docker push $DOCKER_USERNAME/frontend-image
 
   deploy:
     docker:
@@ -66,4 +66,4 @@ jobs:
       - run:
           name: deploy-application
           command: |
-            ssh -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_PUBLIC_DNS "export FRONTEND_IMAGE=\"$FRONTEND_IMAGE\"; export BACKEND_IMAGE=\"$BACKEND_IMAGE\"; rm -rf MedTracker/; git clone https://github.com/lukeohanlon/MedTracker.git; source MedTracker/deploy.sh"
+            ssh -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_PUBLIC_DNS "export FRONTEND_IMAGE=\"$DOCKER_USERNAME/frontend-image\"; export BACKEND_IMAGE=\"$DOCKER_USERNAME/backend-image\"; rm -rf MedTracker/; git clone https://github.com/lukeohanlon/MedTracker.git; source MedTracker/deploy.sh"
