@@ -1,43 +1,46 @@
 version: 2.1
 
-executors:
-  default:
-    docker:
-      - image: circleci/ruby:2.7-node-browsers
-
-jobs:
-  build:
-    executor: default
-    steps:
-      - checkout
-      - setup_remote_docker:
-      - run:
-          name: Build and Push Docker Image
-          command: |
-            docker build -t $DOCKER_USERNAME/meds:latest .
-            docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-            docker push $DOCKER_USERNAME/meds:latest
-
-  deploy:
-    docker:
-      - image: $DOCKER_USERNAME/meds:latest
-    steps:
-      - checkout
-      - run:
-          name: Deploy to EC2
-          command: |
-     ssh -i "meds.pem" ubuntu@ec2-16-170-206-226.eu-north-1.compute.amazonaws.com
-            cd MedTracker
-            docker-compose down
-            docker-compose pull
-            docker-compose up -d
-
 workflows:
   version: 2
   build-deploy:
     jobs:
       - build:
-          context: Docker
+          filters:
+            branches:
+              only:
+                - main
       - deploy:
+          filters:
+            branches:
+              only:
+                - main
           requires:
             - build
+
+jobs:
+  build:
+    working_directory: ~/MedTracker
+    docker:
+      - image: circleci/ruby:2.7-node-browsers
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: install-gems
+          command: bundle install
+      - run:
+          name: update-yarn
+          command: yarn install
+      - run:
+          name: run-tests
+          command: bundle exec rspec
+
+  deploy:
+    docker:
+      - image: circleci/ruby:2.7-node-browsers
+    steps:
+      - checkout
+      - run:
+          name: Deploy to EC2
+          command: |
+            ssh -i "meds.pem" ubuntu@ec2-16-170-206-226.eu-north-1.compute.amazonaws.com "export RAILS_ENV=production; cd MedTracker; docker-compose down; docker-compose pull; docker-compose up -d"
