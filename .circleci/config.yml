@@ -1,34 +1,22 @@
 version: 2.1
 
 jobs:
-  build_backend:
-    executor: default
+  build:
+    docker:
+      - image: circleci/ruby:2.7-node-browsers
     steps:
       - checkout
       - setup_remote_docker
       - run:
-          name: Build and Push Backend Docker Image
+          name: Build and Push Docker Image
           command: |
-            cd backend # Change to your backend directory
-            docker build -t $DOCKER_USERNAME/meds-backend:latest .
+            docker build -t $DOCKER_USERNAME/meds:latest .
             docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-            docker push $DOCKER_USERNAME/meds-backend:latest
-
-  build_frontend:
-    executor: default
-    steps:
-      - checkout
-      - run:
-          name: Build and Push Frontend Docker Image
-          command: |
-            cd frontend # Change to your frontend directory
-            docker build -t $DOCKER_USERNAME/meds-frontend:latest .
-            docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-            docker push $DOCKER_USERNAME/meds-frontend:latest
+            docker push $DOCKER_USERNAME/meds:latest
 
   deploy:
     docker:
-      - image: $DOCKER_USERNAME/meds-backend:latest
+      - image: $DOCKER_USERNAME/meds:latest
     steps:
       - checkout
       - run:
@@ -44,11 +32,8 @@ workflows:
   version: 2
   build-deploy:
     jobs:
-      - build_backend:
-          context: Docker
-      - build_frontend:
+      - build:
           context: Docker
       - deploy:
           requires:
-            - build_backend
-            - build_frontend
+            - build
