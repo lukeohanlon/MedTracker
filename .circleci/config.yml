@@ -1,10 +1,5 @@
 version: 2.1
 
-executors:
-  default:
-    docker:
-      - image: circleci/ruby:2.7-node-browsers
-
 jobs:
   build_backend:
     executor: default

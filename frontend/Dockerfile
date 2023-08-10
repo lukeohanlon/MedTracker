@@ -1,20 +1,23 @@
-# Use the official Node.js image as the base image
+# Use a base image with Node.js installed
 FROM node:14
 
-# Set the working directory inside the container
+# Set the working directory
 WORKDIR /app
 
-# Copy the frontend application code into the container
-COPY . /app/
+# Copy package.json and package-lock.json to the working directory
+COPY package*.json ./
 
 # Install dependencies
 RUN npm install
 
+# Copy the rest of the application code to the working directory
+COPY . .
+
 # Build the frontend application
 RUN npm run build
 
-# Expose the port your frontend app will run on (if needed)
+# Expose the port your frontend application will run on
 EXPOSE 3001
 
-# Start the frontend application
+# Command to start the frontend application
 CMD ["npm", "start"]
