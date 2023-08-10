@@ -3,6 +3,22 @@ import axios from 'axios';
 
 const MyMeds = () => {
   const [meds, setMeds] = useState([]);
+// Inside MyMeds component
+const [reminders, setReminders] = useState([]);
+
+const fetchReminders = async () => {
+  try {
+    const response = await axios.get('/api/v1/reminders');
+    setReminders(response.data);
+  } catch (error) {
+    console.error('Error fetching reminders:', error);
+  }
+};
+
+useEffect(() => {
+  fetchReminders();
+}, []);
+
 
   useEffect(() => {
     // Fetch medications from the API and store them in the state
@@ -33,6 +49,7 @@ const MyMeds = () => {
   return (
     <div>
       <h2>My Medicines</h2>
+      
       <ul>
         {meds.map((medicine) => (
           <li key={medicine.id}>
@@ -41,6 +58,7 @@ const MyMeds = () => {
           </li>
         ))}
       </ul>
+      
     </div>
   );
 };

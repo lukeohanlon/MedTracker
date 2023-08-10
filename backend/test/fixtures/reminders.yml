@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  medication: one
+  reminder_date: 2023-08-10
+  reminder_time: 2023-08-10 03:38:55
+  dose: MyString
+
+two:
+  medication: two
+  reminder_date: 2023-08-10
+  reminder_time: 2023-08-10 03:38:55
+  dose: MyString

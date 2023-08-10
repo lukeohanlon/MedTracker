@@ -2,6 +2,7 @@ class Api::V1::MedicationsController < ApplicationController
   before_action :set_medication, only: %i[show update destroy]
   # skip_before_action :verify_authenticity_token
 
+  
   # GET /medications
   def index
     @medications = Medication.all
@@ -13,16 +14,16 @@ class Api::V1::MedicationsController < ApplicationController
     render json: @medication
   end
 
-  # POST /medications
   def create
-    @medication = Medication.new(medication_params)
-
-    if @medication.save
-      render json: @medication, status: :created, location: @medication
+    medication = Medication.new(medication_params)
+  
+    if medication.save
+      render json: medication, status: :created
     else
-      render json: @medication.errors, status: :unprocessable_entity
+      render json: { errors: medication.errors.full_messages }, status: :unprocessable_entity
     end
   end
+  
 
   # PATCH/PUT /medications/1
   def update
@@ -46,8 +47,13 @@ class Api::V1::MedicationsController < ApplicationController
     @medication = Medication.find(params[:id])
   end
 
+  
+  private
+
   # Only allow a list of trusted parameters through.
   def medication_params
-    params.require(:medication).permit(:generic_name, :dosage_text, :directions, :dosage_form, :active_substance, :route, :dosage_amount, :id)
+    params.require(:medication).permit(:generic_name, :dosage_text, :directions, :dosage_form, :active_substance, :route, :purpose, :dosage_amount,
+                                       reminder_attributes: [:reminder_date, :reminder_time, :dose])
   end
+  
 end

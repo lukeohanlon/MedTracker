@@ -1,15 +1,29 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
+import Modal from './Modal'
 
 const DrugAutocomplete = () => {
   const [inputValue, setInputValue] = useState('')
   const [brandNames, setBrandNames] = useState([])
   const [showDropdown, setShowDropdown] = useState(false)
+  const [medications, setMedications] = useState([])
   const [drugInfo, setDrugInfo] = useState([])
   const [selectedDrug, setSelectedDrug] = useState(null)
   const [selectedDrugData, setSelectedDrugData] = useState(null)
   const [showFullDosageText, setShowFullDosageText] = useState(false)
   const [selectedMedicines, setSelectedMedicines] = useState([])
+  const [reminderDate, setReminderDate] = useState('')
+  const [reminderTime, setReminderTime] = useState('')
+  const [dose, setDose] = useState('')
+  const [showReminderModal, setShowReminderModal] = useState(false);
+
+  const openReminderModal = () => {
+    setShowReminderModal(true);
+  };
+
+  const closeReminderModal = () => {
+    setShowReminderModal(false);
+  };
 
   // This function will be used to set the drug when from dropdown
   const onSelect = selected => {
@@ -19,6 +33,20 @@ const DrugAutocomplete = () => {
 
   // min length of search input before suggestions
   const MIN_INPUT_LENGTH = 3
+
+  // Fetch medications from the API
+  const fetchMedications = async () => {
+    try {
+      const response = await axios.get('/api/v1/medications')
+      setMedications(response.data)
+    } catch (error) {
+      console.error('Error fetching medications:', error)
+    }
+  }
+
+  useEffect(() => {
+    fetchMedications()
+  }, [])
 
   // fetch drugs by brand name
   const fetchBrandNames = async () => {
@@ -71,89 +99,99 @@ const DrugAutocomplete = () => {
     }
   }
 
-  const fetchDrugInfo = async brandName => {
-    try {
-      const apiKey = 'lpJ5J2uvxEZeQZkl3JtmeegWpMzgNlUcL00ahzZK'
-      const apiUrl = `https://api.fda.gov/drug/label.json?api_key=${apiKey}&search=openfda.brand_name.exact:"${brandName}"&limit=1`
+  // const fetchDrugInfo = async brandName => {
+  //   try {
+  //     const apiKey = 'lpJ5J2uvxEZeQZkl3JtmeegWpMzgNlUcL00ahzZK';
+  //     const apiUrl = `https://api.fda.gov/drug/label.json?api_key=${apiKey}&search=openfda.brand_name.exact:"${brandName}"&limit=1`;
 
-      const response = await axios.get(apiUrl)
-      const drugInfo = response.data.results[0]
+  //     const response = await axios.get(apiUrl);
+  //     const drugInfo = response.data.results[0];
 
-      if (drugInfo) {
-        return {
-          brandName: drugInfo.brandName,
-          purpose: drugInfo.openfda.purpose,
-          genericName: drugInfo.openfda.generic_name?.[0] || '',
-          dosageText: drugInfo.dosage_and_administration || '',
-          dosageForm: drugInfo.openfda.dosage_form?.[0] || '',
-          activeSubstance: drugInfo.openfda.substance_name?.[0] || '',
-          route: drugInfo.openfda.route?.[0] || '',
-          dosageAmount: drugInfo.dosage_and_administration || '',
-        }
-      } else {
-        const medicinalProductInfo = await fetchDrugInfoByMedicinalProduct(
-          brandName
-        )
-        return {
-          brandName: '',
-          genericName: medicinalProductInfo.genericName || '',
-          dosageText: medicinalProductInfo.dosageText || '',
-          dosageForm: medicinalProductInfo.dosageForm || '',
-          activeSubstance: medicinalProductInfo.activeSubstance || '',
-          route: medicinalProductInfo.route || '',
-          dosageAmount: medicinalProductInfo.dosageAmount || '',
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching drug info:', error)
-      return {
-        brandName: '',
-        genericName: '',
-        dosageText: '',
-        dosageForm: '',
-        activeSubstance: '',
-        route: '',
-        dosageAmount: '',
-      }
-    }
-  }
+  //     if (drugInfo) {
+  //       const purpose = drugInfo.purpose?.[0] || '';
+  //       const extractedPurpose = purpose && purpose.includes('Purposes')
+  //         ? purpose.split('Purposes ')[1]
+  //         : purpose;
+  //       return {
+  //         brandName: drugInfo.openfda.brand_name?.[0] || '', // Fixed to use "brand_name" instead of "brandName"
+  //         purpose: extractedPurpose || '',
+  //         genericName: drugInfo.openfda.generic_name?.[0] || '',
+  //         dosageText: drugInfo.dosage_and_administration || '',
+  //         dosageForm: drugInfo.openfda.dosage_form?.[0] || '',
+  //         activeSubstance: drugInfo.openfda.substance_name?.[0] || '',
+  //         route: drugInfo.openfda.route?.[0] || '',
+  //         dosageAmount: drugInfo.dosage_and_administration || '',
+  //       };
+  //     } else {
+  //       const medicinalProductInfo = await fetchDrugInfoByMedicinalProduct(
+  //         brandName
+  //       );
+  //       return {
+  //         brandName: '',
+  //         purpose: medicinalProductInfo.purpose || '', // Fixed to use "purpose" from medicinalProductInfo
+  //         genericName: medicinalProductInfo.genericName || '',
+  //         dosageText: medicinalProductInfo.dosageText || '',
+  //         dosageForm: medicinalProductInfo.dosageForm || '',
+  //         activeSubstance: medicinalProductInfo.activeSubstance || '',
+  //         route: medicinalProductInfo.route || '',
+  //         dosageAmount: medicinalProductInfo.dosageAmount || '',
+  //       };
+  //     }
+  //   } catch (error) {
+  //     console.error('Error fetching drug info:', error);
+  //     return {
+  //       brandName: '',
+  //       genericName: '',
+  //       dosageText: '',
+  //       dosageForm: '',
+  //       activeSubstance: '',
+  //       route: '',
+  //       dosageAmount: '',
+  //     };
+  //   }
+  // };
 
-  const fetchDrugInfoByMedicinalProduct = async medicinalProduct => {
-    try {
-      const apiKey = 'lpJ5J2uvxEZeQZkl3JtmeegWpMzgNlUcL00ahzZK'
-      const apiUrl = `https://api.fda.gov/drug/label.json?api_key=${apiKey}&search=medicinalproduct.exact:"${medicinalProduct}"&limit=1`
+  // const fetchDrugInfoByMedicinalProduct = async medicinalProduct => {
+  //   try {
+  //     const apiKey = 'lpJ5J2uvxEZeQZkl3JtmeegWpMzgNlUcL00ahzZK';
+  //     const apiUrl = `https://api.fda.gov/drug/label.json?api_key=${apiKey}&search=medicinalproduct.exact:"${medicinalProduct}"&limit=1`;
 
-      const response = await axios.get(apiUrl)
-      const drugInfo = response.data.results[0]
+  //     const response = await axios.get(apiUrl);
+  //     const drugInfo = response.data.results[0];
 
-      if (drugInfo) {
-        return {
-          brandName: '',
-          genericName: drugInfo.openfda.generic_name?.[0] || '',
-          dosageText: drugInfo.dosage_and_administration || '',
-          dosageForm: drugInfo.openfda.dosage_form?.[0] || '',
-          purpose: selectedDrug.purpose || '',
-          activeSubstance: drugInfo.openfda.substance_name?.[0] || '',
-          route: drugInfo.openfda.route?.[0] || '',
-          dosageAmount: drugInfo.dosage_and_administration || '',
-        }
-      } else {
-        throw new Error('Drug information not found.')
-      }
-    } catch (error) {
-      console.error('Error fetching drug info by medicinal product:', error)
-      return {
-        brandName: '',
-        purpose: '',
-        genericName: '',
-        dosageText: '',
-        dosageForm: '',
-        activeSubstance: '',
-        route: '',
-        dosageAmount: '',
-      }
-    }
-  }
+  //     if (drugInfo) {
+  //       const purpose = drugInfo.purpose?.[0] || '';
+  //       const extractedPurpose = purpose && purpose.includes('Purposes')
+  //         ? purpose.split('Purposes ')[1]
+  //         : purpose;
+
+  //       return {
+  //         brandName: '',
+  //         purpose: extractedPurpose,
+  //         genericName: drugInfo.openfda.generic_name?.[0] || '',
+  //         dosageText: drugInfo.dosage_and_administration || '',
+  //         dosageForm: drugInfo.openfda.dosage_form?.[0] || '',
+  //         activeSubstance: drugInfo.openfda.substance_name?.[0] || '',
+  //         route: drugInfo.openfda.route?.[0] || '',
+  //         dosageAmount: drugInfo.dosage_and_administration || '',
+  //       };
+  //     } else {
+  //       throw new Error('Drug information not found.');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error fetching drug info by medicinal product:', error);
+  //     return {
+  //       brandName: '',
+  //       purpose: '',
+  //       genericName: '',
+  //       dosageText: '',
+  //       dosageForm: '',
+  //       activeSubstance: '',
+  //       route: '',
+  //       dosageAmount: '',
+  //     };
+  //   }
+  // }
 
   const handleSelectBrand = async brandName => {
     const apiKey = 'lpJ5J2uvxEZeQZkl3JtmeegWpMzgNlUcL00ahzZK'
@@ -164,64 +202,62 @@ const DrugAutocomplete = () => {
 
     try {
       const response = await axios.get(apiUrl)
+      await fetchMedications()
       const selectedDrugInfo = response.data.results[0]
 
-      // Now, search for adverse events related to the selected drug's active substance (substance name)
-      const selectedDrugSubstanceName =
-        selectedDrugInfo.openfda.substance_name?.[0]
-      if (selectedDrugSubstanceName) {
-        const selectedDrugSearchUrl = `https://api.fda.gov/drug/event.json?api_key=${apiKey}&search=${encodeURIComponent(
-          `patient.drug.openfda.substance_name:"${selectedDrugSubstanceName}"`
-        )}`
-
-        const selectedDrugResponse = await axios.get(selectedDrugSearchUrl)
+      if (selectedDrugInfo) {
+        const purpose = selectedDrugInfo.purpose?.[0] || ''
+        const extractedPurpose =
+          purpose && purpose.includes('Purposes')
+            ? purpose.split('Purposes ')[1]
+            : purpose
 
         // Update the state with additional data for the selected drug
-        setSelectedDrugData(selectedDrugResponse.data)
+        setSelectedDrug({
+          brandName: brandName || '',
+          purpose: extractedPurpose || '',
+          genericName: selectedDrugInfo.openfda.generic_name?.[0] || '',
+          dosageText: selectedDrugInfo.dosage_and_administration || '',
+          dosageForm: selectedDrugInfo.openfda.route?.[0] || '',
+          activeSubstance: selectedDrugInfo.openfda.substance_name?.[0] || '',
+          route: selectedDrugInfo.openfda.route?.join(', ') || '',
+          dosageAmount: selectedDrugInfo.dosage_and_administration || '',
+        })
+
+        setShowDropdown(false)
+      } else {
+        console.error('Selected drug information not found.')
       }
-
-      // Call your onSelect function with the selected drug details, including dosage information
-      onSelect({
-        brandName: brandName,
-        genericName: selectedDrugInfo.openfda.generic_name?.[0] || '',
-        // purpose: selectedDrug.purpose || '',
-        dosageText: selectedDrugInfo.dosage_and_administration || '',
-        dosageForm: selectedDrugInfo.openfda.route?.[0] || '',
-        route: selectedDrugInfo.openfda.route?.join(', ') || '',
-      })
-
-      setInputValue(brandName)
-      setShowDropdown(false)
     } catch (error) {
       console.error('Error fetching drug data:', error)
     }
   }
+
   const saveSelectedMedicines = async () => {
-    const apiBaseUrl = 'http://localhost:3000/api/v1/medications';
+    const apiBaseUrl = 'http://localhost:3000/api/v1/medications'
     console.log(selectedDrug.dosageText[0])
     try {
       if (selectedDrug) {
-       
         const medicationData = {
           generic_name: selectedDrug.brandName || 'Not Availablee',
-          // purpose: selectedDrug.purpose || 'Not Available',
+          purpose: selectedDrug.purpose || 'Not Available',
           dosage_text: selectedDrug.dosageText[0] || 'Not Available',
           dosage_form: selectedDrug.dosageForm || 'Not Available',
           active_substance: selectedDrug.activeSubstance || 'Not Available',
-          route: selectedDrug.route || 'Not Available'
-        };
-  
-        const response = await axios.post(`${apiBaseUrl}.json`, { medication: medicationData });
-        console.log('Medication created:', response.data);
+          route: selectedDrug.route || 'Not Available',
+        }
+
+        const response = await axios.post(`${apiBaseUrl}.json`, {
+          medication: medicationData,
+        })
+        console.log('Medication created:', response.data)
       } else {
-        console.error('No selected drug.');
+        console.error('No selected drug.')
       }
     } catch (error) {
-      console.error('Error saving medicines:', error);
+      console.error('Error saving medicines:', error)
     }
-  };
-  
-  
+  }
 
   const addMedicine = medicine => {
     setSelectedMedicines([...selectedMedicines, medicine])
@@ -230,6 +266,50 @@ const DrugAutocomplete = () => {
   const cancelSelection = () => {
     setSelectedMedicines([])
   }
+
+  const handleReminderDateChange = event => {
+    setReminderDate(event.target.value);
+  };
+  
+  const handleReminderTimeChange = event => {
+    setReminderTime(event.target.value);
+  };
+  
+  const handleDoseChange = event => {
+    setDose(event.target.value);
+  };
+
+  const createReminder = async () => {
+    try {
+      console.log(reminderDate, reminderTime, dose);
+      if (selectedDrug) {
+        const medicationData = {
+          generic_name: selectedDrug.brandName || 'Not Available',
+          purpose: selectedDrug.purpose || 'Not Available',
+          dosage_text: selectedDrug.dosageText[0] || 'Not Available',
+          dosage_form: selectedDrug.dosageForm || 'Not Available',
+          active_substance: selectedDrug.activeSubstance || 'Not Available',
+          route: selectedDrug.route || 'Not Available',
+          reminder_date: reminderDate,
+          reminder_time: reminderTime,
+          dose: dose,
+        };
+  
+        const response = await axios.post('http://localhost:3000/api/v1/medications', {
+          medication: medicationData,
+        });
+  
+        console.log('Medication and Reminder created:', response.data);
+      } else {
+        console.error('No selected drug.');
+      }
+    } catch (error) {
+      console.error('Error creating medication and reminder:', error);
+    }
+  };
+  
+  
+  
 
   const renderDrugInfo = () => {
     if (selectedDrug) {
@@ -241,13 +321,26 @@ const DrugAutocomplete = () => {
         <div className="search-res-wrap">
           <h2>{drugName} Information</h2>
           {selectedDrug.brandName && (
-            <p><span className="blue">Brand Name:</span> {selectedDrug.brandName}</p>
+            <p>
+              <span className="blue">Brand Name:</span> {selectedDrug.brandName}
+            </p>
           )}
-          <p><span className="blue">Purpose: </span> {selectedDrug.purpose}</p>
-          <p><span className="blue">Generic Name:</span> {selectedDrug.genericName}</p>
+          {selectedDrug.purpose && (
+            <p>
+              <span className="blue">Purpose:</span> {selectedDrug.purpose}
+            </p>
+          )}
+          {selectedDrug.genericName && (
+            <p>
+              <span className="blue">Generic Name:</span>{' '}
+              {selectedDrug.genericName}
+            </p>
+          )}
           {selectedDrug.dosageText && (
             <div>
-              <p><span className="blue">Dosage Text:</span></p>
+              <p>
+                <span className="blue">Dosage Text:</span>
+              </p>
               <ul>
                 {showFullDosageText
                   ? selectedDrug.dosageText[0]
@@ -267,11 +360,30 @@ const DrugAutocomplete = () => {
               )}
             </div>
           )}
-          <p><span className="blue">Dosage Form:</span> {selectedDrug.dosageForm}</p>
-          <p><span className="blue">Active Substance:</span> {selectedDrug.activeSubstance}</p>
-          <p><span className="blue">Route:</span> {selectedDrug.route}</p>
+          {selectedDrug.dosageForm && (
+            <p>
+              <span className="blue">Dosage Form:</span>{' '}
+              {selectedDrug.dosageForm}
+            </p>
+          )}
+          {selectedDrug.activeSubstance && (
+            <p>
+              <span className="blue">Active Substance:</span>{' '}
+              {selectedDrug.activeSubstance}
+            </p>
+          )}
+          {selectedDrug.route && (
+            <p>
+              <span className="blue">Route:</span> {selectedDrug.route}
+            </p>
+          )}
+        {selectedDrug && (
+        <>
+          <button onClick={openReminderModal}>Set Reminder</button>
           <button onClick={saveSelectedMedicines}>Save Medicines</button>
-        <button onClick={cancelSelection}>Cancel</button>
+        </>
+      )}
+          <button onClick={cancelSelection}>Cancel</button>
         </div>
       )
     }
@@ -288,7 +400,7 @@ const DrugAutocomplete = () => {
   }, [inputValue])
 
   return (
-    <div className='search-wrap'>
+    <div className="search-wrap">
       <input
         type="text"
         placeholder="Search for drugs by brand name..."
@@ -304,8 +416,37 @@ const DrugAutocomplete = () => {
           ))}
         </ul>
       )}
-  
-        {renderDrugInfo()}
+     {showReminderModal && (
+        <Modal onClose={closeReminderModal}>
+          <h2>Set Reminder</h2>
+          <div>
+            <label>Date:</label>
+            <input
+              type="date"
+              value={reminderDate}
+              onChange={handleReminderDateChange}
+            />
+          </div>
+          <div>
+            <label>Time:</label>
+            <input
+              type="time"
+              value={reminderTime}
+              onChange={handleReminderTimeChange}
+            />
+          </div>
+          <div>
+            <label>Dose:</label>
+            <input
+              type="text"
+              value={dose}
+              onChange={handleDoseChange}
+            />
+          </div>
+          <button onClick={createReminder}>Save Reminder</button>
+        </Modal>
+      )}
+      {renderDrugInfo()}
     </div>
   )
 }
