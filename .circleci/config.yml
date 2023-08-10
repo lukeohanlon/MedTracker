@@ -1,25 +1,55 @@
 version: 2.1
 
+orbs:
+  node: circleci/node@5.1.0
+
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only:
+                - main
+      - deploy:
+          filters:
+            branches:
+              only:
+                - main
+          requires:
+            - build
+
 jobs:
   build:
+    working_directory: ~/meds
     docker:
-      - image: circleci/ruby:2.7-node-browsers
+      - image: circleci/node:10.16.3
     steps:
       - checkout
-      - setup_remote_docker:
-          version: 20.10.7
-          docker_layer_caching: true
+      - setup_remote_docker
       - run:
-          name: Build and Push Docker Images
-          command: |
-            docker build -t $DOCKER_USERNAME/backend-image:latest ./backend
-            docker build -t $DOCKER_USERNAME/frontend-image:latest ./frontend
-            docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-            docker push $DOCKER_USERNAME/backend-image:latest
-            docker push $DOCKER_USERNAME/frontend-image:latest
-
-
-            - run:
+          name: update-npm
+          command: 'sudo npm install -g npm@5' 
+      - restore_cache:
+          key: dependency-cache-backend-{{ checksum "backend/package-lock.json"}}
+      - run:
+          name: install-npm
+          command: npm install
+      - save_cache:
+          key: dependency-cache-backend-{{ checksum "backend/package-lock.json"}} 
+          paths:
+            - ./backend/node_modules
+      - restore_cache:
+          key: dependency-cache-frontend-{{ checksum "frontend/package-lock.json"}}
+      - run:
+          name: install-npm
+          command: npm install
+      - save_cache:
+          key: dependency-cache-frontend-{{ checksum "frontend/package-lock.json"}} 
+          paths:
+            - ./frontend/node_modules
+      - run:
           name: docker-login
           command: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
       - run:
@@ -34,27 +64,12 @@ jobs:
             docker push $BACKEND_IMAGE
             docker push $FRONTEND_IMAGE
 
-
   deploy:
     docker:
-      - image: $DOCKER_USERNAME/meds:latest
+      - image: circleci/node:10.16.3
     steps:
       - checkout
       - run:
-          name: Deploy to EC2
+          name: deploy-application
           command: |
-            ssh -i "meds.pem" ubuntu@ec2-16-170-206-226.eu-north-1.compute.amazonaws.com
-            cd MedTracker
-            docker-compose down
-            docker-compose pull
-            docker-compose up -d
-
-workflows:
-  version: 2
-  build-deploy:
-    jobs:
-      - build:
-          context: Docker
-      - deploy:
-          requires:
-            - build
+            ssh -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_PUBLIC_DNS "export FRONTEND_IMAGE=\"$FRONTEND_IMAGE\"; export BACKEND_IMAGE=\"$BACKEND_IMAGE\"; rm -rf MedTracker/; git clone https://github.com/lukeohanlon/MedTracker.git; source MedTracker/deploy.sh"
