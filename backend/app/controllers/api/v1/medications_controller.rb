@@ -16,13 +16,14 @@ class Api::V1::MedicationsController < ApplicationController
 
   def create
     medication = Medication.new(medication_params)
-  
+
     if medication.save
       render json: medication, status: :created
     else
       render json: { errors: medication.errors.full_messages }, status: :unprocessable_entity
     end
   end
+
   
 
   # PATCH/PUT /medications/1
@@ -48,12 +49,20 @@ class Api::V1::MedicationsController < ApplicationController
   end
 
   
-  private
 
   # Only allow a list of trusted parameters through.
   def medication_params
-    params.require(:medication).permit(:generic_name, :dosage_text, :directions, :dosage_form, :active_substance, :route, :purpose, :dosage_amount,
-                                       reminder_attributes: [:reminder_date, :reminder_time, :dose])
+    params.require(:medication).permit(
+      :generic_name,
+      :purpose,
+      :dosage_text,
+      :dosage_form,
+      :active_substance,
+      :route,
+      :reminder_date,   
+      :reminder_time,   
+      :dose             
+    )
   end
   
 end

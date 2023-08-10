@@ -8,7 +8,7 @@ const [reminders, setReminders] = useState([]);
 
 const fetchReminders = async () => {
   try {
-    const response = await axios.get('/api/v1/reminders');
+    const response = await axios.get('http://localhost:3000/api/v1/medications');
     setReminders(response.data);
   } catch (error) {
     console.error('Error fetching reminders:', error);

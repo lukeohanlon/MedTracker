@@ -1,13 +1,14 @@
 class Medication < ApplicationRecord
-    # Other model associations and validations
-    
-    # Include the new attributes in the list of permitted attributes
-    def self.medication_params
-      params.require(:medication).permit(
-        :generic_name, :dosage_text, :directions, :dosage_form, 
-        :active_substance, :route, :purpose, :dosage_amount,
-        :reminder_date, :reminder_time, :dose
-      )
-    end
+    # Associations
+    # belongs_to :user
+    has_many :reminders
+  
+    # Validations
+    validates :generic_name, presence: true
+    validates :dosage_text, presence: true
+    # ... other validations ...
+  
+    # Custom methods or business logic can also be defined here
+    # accepts_nested_attributes_for :reminders
   end
   

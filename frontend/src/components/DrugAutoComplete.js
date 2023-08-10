@@ -281,8 +281,7 @@ const DrugAutocomplete = () => {
 
   const createReminder = async () => {
     try {
-      console.log(reminderDate, reminderTime, dose);
-      if (selectedDrug) {
+      if (selectedDrug && reminderDate && reminderTime && dose) {
         const medicationData = {
           generic_name: selectedDrug.brandName || 'Not Available',
           purpose: selectedDrug.purpose || 'Not Available',
@@ -291,25 +290,27 @@ const DrugAutocomplete = () => {
           active_substance: selectedDrug.activeSubstance || 'Not Available',
           route: selectedDrug.route || 'Not Available',
           reminder_date: reminderDate,
-          reminder_time: reminderTime,
+          reminder_time: reminderTime
+          ? new Date(`2000-01-01T${reminderTime}`).toLocaleTimeString([], { timeStyle: 'short' })
+          : '',  
           dose: dose,
         };
+        console.log("SENT DATA: " + medicationData.reminder_date + medicationData.reminder_time + medicationData.dose )
   
         const response = await axios.post('http://localhost:3000/api/v1/medications', {
           medication: medicationData,
         });
-  
+
+        closeReminderModal();
         console.log('Medication and Reminder created:', response.data);
       } else {
-        console.error('No selected drug.');
+        console.error('Please fill in all fields before saving the reminder.');
       }
     } catch (error) {
       console.error('Error creating medication and reminder:', error);
     }
   };
-  
-  
-  
+
 
   const renderDrugInfo = () => {
     if (selectedDrug) {
@@ -417,7 +418,7 @@ const DrugAutocomplete = () => {
         </ul>
       )}
      {showReminderModal && (
-        <Modal onClose={closeReminderModal}>
+        <Modal brandName={selectedDrug.brandName} onClose={closeReminderModal}>
           <h2>Set Reminder</h2>
           <div>
             <label>Date:</label>
@@ -444,7 +445,7 @@ const DrugAutocomplete = () => {
             />
           </div>
           <button onClick={createReminder}>Save Reminder</button>
-        </Modal>
+        </Modal >
       )}
       {renderDrugInfo()}
     </div>
