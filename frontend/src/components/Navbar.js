@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { HiMenu, HiChevronDoubleRight, HiChevronDown } from 'react-icons/hi'
 import '../index.css'
-// import logo from '../media/logo.png'
+import logo from '../media/logoblue.png'
 
 const Navbar = props => {
   const { toggleMenu, isMenuOpen, setIsMenuOpen } = props
@@ -12,7 +12,7 @@ const Navbar = props => {
       <div className="navbar-logo">
         <NavLink className='a' to="/">
           {' '}
-          {/* <img src={logo} alt="Logo" className="logo-image" /> */}
+          <img src={logo} alt="Logo" className="logo-image" />
         </NavLink>
       </div>
       <ul

@@ -42,7 +42,7 @@ const DrugAutocomplete = ({onAddMedication}) => {
   // Fetch medications from the API
   const fetchMedications = async () => {
     try {
-      const response = await axios.get('/api/v1/medications')
+      const response = await axios.get('http://localhost:3000/api/v1/medications')
       setMedications(response.data)
     } catch (error) {
       console.error('Error fetching medications:', error)
@@ -135,6 +135,7 @@ const DrugAutocomplete = ({onAddMedication}) => {
           route: selectedDrugInfo.openfda.route?.join(', ') || '',
           dosageAmount: selectedDrugInfo.dosage_and_administration || '',
         })
+        setInputValue('');
 
         setShowDropdown(false)
       } else {
