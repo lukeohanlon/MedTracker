@@ -15,7 +15,7 @@ const Navbar = props => {
           <img src={logo} alt="Logo" className="logo-image" />
         </NavLink>
       </div>
-      <ul
+      {/* <ul
         className={`navbar-Navlinks navbar-menu ${isMenuOpen ? 'active' : ''} ul`}
       >
         <div className="navbar-toggle  menu-arrow" onClick={toggleMenu}>
@@ -45,7 +45,7 @@ const Navbar = props => {
           {' '}
           <HiMenu />
         </div>
-      </div>
+      </div> */}
     </nav>
   )
 }

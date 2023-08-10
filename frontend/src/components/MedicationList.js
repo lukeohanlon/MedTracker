@@ -32,7 +32,7 @@ const MedicationList = () => {
             <p>Dosage Form: {selectedDrug.dosageForm}</p>
           </div>
         )}
-        <MyMeds rend={rendizzy} meds={meds} setMeds={setMeds}/>
+        <MyMeds  meds={meds} setMeds={setMeds}/>
       </div>
     </div>
   );

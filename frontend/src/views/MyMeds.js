@@ -3,11 +3,9 @@ import axios from 'axios';
 import MedCard from '../components/MedCard';
 import EditModal from '../components/EditModal';
 
-const MyMeds = ({ meds, setMeds, rend }) => {
+const MyMeds = ({ meds, setMeds }) => {
   const [selectedMedication, setSelectedMedication] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [dummyState, setDummyState] = useState(false); 
-
 
   const openEditModal = (medication) => {
     setSelectedMedication(medication);
@@ -36,7 +34,10 @@ const MyMeds = ({ meds, setMeds, rend }) => {
 
   const handleDelete = async (id) => {
     try {
-      // Delete logic...
+      const apiBaseUrl = `http://localhost:3000/api/v1/medications/${id}`;
+      await axios.delete(apiBaseUrl);
+      // Remove the deleted medication from the state
+      setMeds((prevMeds) => prevMeds.filter((med) => med.id !== id));
     } catch (error) {
       console.error('Error deleting medication:', error);
     }
@@ -45,12 +46,10 @@ const MyMeds = ({ meds, setMeds, rend }) => {
     const updatedMeds = meds.map((med) =>
       med.id === updatedMed.id ? updatedMed : med
     );
-    rend()
     setMeds(updatedMeds);
     closeEditModal();
-    setDummyState(!dummyState); // Toggle dummy state to force re-render
   };
-
+  
   return (
     <div>
       <h2 className="reminders-head">My Reminders</h2>
