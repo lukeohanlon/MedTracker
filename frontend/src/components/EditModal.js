@@ -15,7 +15,6 @@ const EditModal = ({ medication, onClose, onEditSuccess }) => {
       [name]: value,
     }));
   };
-  
 
   const handleEditSubmit = async () => {
     try {
@@ -45,7 +44,7 @@ const EditModal = ({ medication, onClose, onEditSuccess }) => {
           value={editedMedication.reminder_time}
           onChange={handleInputChange}
         />
-<br />
+        <br />
         <label htmlFor="recurring_interval">Due Every:</label>
         <br />
         <input

@@ -5,7 +5,7 @@ import MyMeds from '../views/MyMeds';
 const MedicationList = () => {
   const [selectedDrug, setSelectedDrug] = useState(null);
   const [meds, setMeds] = useState([])
-  
+  const [dummyState, setDummyState] = useState(false); 
   const addMedication = newMedication => {
     setMeds(prevMeds => [...prevMeds, newMedication]);
   };
@@ -14,7 +14,10 @@ const MedicationList = () => {
   const handleDrugSelection = (selected) => {
     setSelectedDrug(selected);
   };
-
+  const rendizzy = () => {
+    setDummyState(!dummyState); 
+  }
+  
   return (
     <div>
       <h1>Medication List</h1>
@@ -29,7 +32,7 @@ const MedicationList = () => {
             <p>Dosage Form: {selectedDrug.dosageForm}</p>
           </div>
         )}
-        <MyMeds  meds={meds} setMeds={setMeds}/>
+        <MyMeds rend={rendizzy} meds={meds} setMeds={setMeds}/>
       </div>
     </div>
   );

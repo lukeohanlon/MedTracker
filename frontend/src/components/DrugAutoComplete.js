@@ -17,6 +17,7 @@ const DrugAutocomplete = ({onAddMedication}) => {
   const [dose, setDose] = useState('')
   const [showReminderModal, setShowReminderModal] = useState(false)
   const [recurringHours, setRecurringHours] = useState('');
+  const [dummyState, setDummyState] = useState(false); 
   const [recurringMinutes, setRecurringMinutes] = useState('');
 
 

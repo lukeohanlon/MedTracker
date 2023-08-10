@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import EditModal from './EditModal';
 
@@ -61,7 +60,7 @@ const MedCard = ({ medicine, handleDelete, handleEdit }) => {
         <EditModal
           medication={medicine}
           onClose={closeEditModal}
-          onEditSuccess={handleEdit} // Pass the handleEdit function to update data
+          onEditSuccess={handleEdit}
         />
       )}
     </div>
