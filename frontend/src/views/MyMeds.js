@@ -21,7 +21,7 @@ const MyMeds = ({ meds, setMeds }) => {
     // Fetch medications from the API and store them in the state
     const fetchMedications = async () => {
       try {
-        const apiBaseUrl = 'http://localhost:3000/api/v1/medications';
+        const apiBaseUrl = 'http://16.170.206.226:3000/api/v1/medications';
         const response = await axios.get(apiBaseUrl);
         setMeds(response.data);
       } catch (error) {
@@ -34,7 +34,7 @@ const MyMeds = ({ meds, setMeds }) => {
 
   const handleDelete = async (id) => {
     try {
-      const apiBaseUrl = `http://localhost:3000/api/v1/medications/${id}`;
+      const apiBaseUrl = `http://16.170.206.226:3000/api/v1/medications/${id}`;
       await axios.delete(apiBaseUrl);
       // Remove the deleted medication from the state
       setMeds((prevMeds) => prevMeds.filter((med) => med.id !== id));

@@ -42,7 +42,7 @@ const DrugAutocomplete = ({onAddMedication}) => {
   // Fetch medications from the API
   const fetchMedications = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/v1/medications')
+      const response = await axios.get('http://16.170.206.226:3000/api/v1/medications')
       setMedications(response.data)
     } catch (error) {
       console.error('Error fetching medications:', error)
@@ -147,7 +147,7 @@ const DrugAutocomplete = ({onAddMedication}) => {
   }
 
   const saveSelectedMedicines = async () => {
-    const apiBaseUrl = 'http://localhost:3000/api/v1/medications'
+    const apiBaseUrl = 'http://16.170.206.226:3000/api/v1/medications'
     console.log(selectedDrug.dosageText[0])
     try {
       if (selectedDrug) {
@@ -220,7 +220,7 @@ const DrugAutocomplete = ({onAddMedication}) => {
   
         try {
           const response = await axios.post(
-            'http://localhost:3000/api/v1/medications',
+            'http://16.170.206.226:3000/api/v1/medications',
             { medication: medicationData }
           );
   
