@@ -1,10 +1,11 @@
-
-
 Rails.application.routes.draw do
-  namespace :api do
-    get 'open_fda/drug_recalls'
+  namespace :api do 
+    namespace :v1 do
+      resources :medications
+    end
   end
-  resources :medications, only: [:index, :new, :create, :show, :edit, :update, :destroy]
-  resources :drugs, only: [:index]       # Add other actions if needed
-end
+  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
+  # Defines the root path route ("/")
+  # root "articles#index"
+end

@@ -10,17 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_08_08_173320) do
-  create_table "drugs", force: :cascade do |t|
-    t.string "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
+ActiveRecord::Schema[7.0].define(version: 2023_08_09_215317) do
   create_table "medications", force: :cascade do |t|
-    t.string "name"
-    t.string "dosage"
-    t.string "schedule"
+    t.string "generic_name"
+    t.text "dosage_text"
+    t.text "directions"
+    t.string "dosage_form"
+    t.string "active_substance"
+    t.string "route"
+    t.string "dosage_amount"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

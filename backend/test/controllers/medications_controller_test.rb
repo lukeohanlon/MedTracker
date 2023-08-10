@@ -6,43 +6,33 @@ class MedicationsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should get index" do
-    get medications_url
-    assert_response :success
-  end
-
-  test "should get new" do
-    get new_medication_url
+    get medications_url, as: :json
     assert_response :success
   end
 
   test "should create medication" do
     assert_difference("Medication.count") do
-      post medications_url, params: { medication: { dosage: @medication.dosage, name: @medication.name, schedule: @medication.schedule } }
+      post medications_url, params: { medication: { active_substance: @medication.active_substance, directions: @medication.directions, dosage_amount: @medication.dosage_amount, dosage_form: @medication.dosage_form, dosage_text: @medication.dosage_text, generic_name: @medication.generic_name, route: @medication.route } }, as: :json
     end
 
-    assert_redirected_to medication_url(Medication.last)
+    assert_response :created
   end
 
   test "should show medication" do
-    get medication_url(@medication)
-    assert_response :success
-  end
-
-  test "should get edit" do
-    get edit_medication_url(@medication)
+    get medication_url(@medication), as: :json
     assert_response :success
   end
 
   test "should update medication" do
-    patch medication_url(@medication), params: { medication: { dosage: @medication.dosage, name: @medication.name, schedule: @medication.schedule } }
-    assert_redirected_to medication_url(@medication)
+    patch medication_url(@medication), params: { medication: { active_substance: @medication.active_substance, directions: @medication.directions, dosage_amount: @medication.dosage_amount, dosage_form: @medication.dosage_form, dosage_text: @medication.dosage_text, generic_name: @medication.generic_name, route: @medication.route } }, as: :json
+    assert_response :success
   end
 
   test "should destroy medication" do
     assert_difference("Medication.count", -1) do
-      delete medication_url(@medication)
+      delete medication_url(@medication), as: :json
     end
 
-    assert_redirected_to medications_url
+    assert_response :no_content
   end
 end
